@@ -1,13 +1,13 @@
-import { cart, removeFromCart, updateCartQuantity, updateQuantity} from "../data/cart.js";
+import { cart, removeFromCart, updateCartQuantity, updateQuantity, updateDeliveryOption} from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js'
 import {deliveryOptions} from '../data/deliverOptions.js'
-const today = dayjs();
+// const today = dayjs();
 
-const deliveryDate = today.add(7, 'days');
+// const deliveryDate = today.add(7, 'days');
 
-console.log(deliveryDate.format('dddd, MMMM D'))
+// console.log(deliveryDate.format('dddd, MMMM D'))
 let cartSummaryHTML = '';
 
 cart.forEach((cartItem) => {
@@ -17,7 +17,7 @@ cart.forEach((cartItem) => {
 
     products.forEach((product) => {
         if (product.id === productId) {
-           matchingProduct = product; 
+           matchingProduct = product;
         }
     
     });
@@ -33,15 +33,14 @@ deliveryOptions.forEach((option) => {
 
 const today = dayjs();
 
-const deliveryDate = today.add(7, 'days');
+const deliveryDate = today.add(deliveryOption.deliveryDays, 'days');
 
 const dateString = deliveryDate.format('dddd, MMMM D')
-
+console.log(deliveryDate)
 
 
 cartSummaryHTML += `
-    <div class="cart-item-container 
-    js-cart-item-container-${matchingProduct.id}">
+       <div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
             <div class="delivery-date">
                 Delivery date: ${dateString} 
             </div>
@@ -103,7 +102,9 @@ function deliveryOptionsHTML(matchingProduct, cartItem) {
 
         const isChecked = deliveryOption.id === cartItem.deliveryOptionId
 
-        html+= `<div class="delivery-option">
+        html+= `<div class="delivery-option js-delivery-option"
+        data-product-id="${matchingProduct.id}"
+        data-delivery-option-id="${deliveryOption.id}">
         <input type="radio"
         ${isChecked ? 'checked' : ''} class="delivery-option-input"
         name="delivery-option-${matchingProduct.id}">
@@ -145,8 +146,8 @@ document.querySelectorAll('.js-delete-link').forEach((link) => {
 document.querySelectorAll('.js-update-link').forEach((link) => {
     link.addEventListener('click', () => {
         const dataUpdateId = link.dataset.updateId
+        console.log(dataUpdateId)
         const container= document.querySelector(`.js-cart-item-container-${dataUpdateId}`)
-        // container.classList.add('css-update-quantity')
         container.classList.add('is-editing-quantity')
         
 
@@ -156,17 +157,24 @@ document.querySelectorAll('.save-link').forEach((link) => {
     link.addEventListener('click', () => {
         const dataUpdateId = link.dataset.updateId
         const container= document.querySelector(`.js-cart-item-container-${dataUpdateId}`)
-        const newQuantity = document.querySelector('.quantity-input').value
-        if (Number(newQuantity) <= 0 || Number(newQuantity) > 1000) {
-            alert('the quantity should be between 1 and 1000!')
-        } else{
-            updateQuantity(dataUpdateId, newQuantity)
-            updateCartQuantity('.js-checkout')
-            updateCartQuantity('.quantity-label')
+        const newQuantity = Number(container.querySelector('.select-input').value)
+        // console.log(newQuantity)
+        updateQuantity(dataUpdateId, newQuantity, container)
+        
+           
 
-        }
+        
         
         container.classList.remove('is-editing-quantity')
     })
 
+})
+
+document.querySelectorAll('.js-delivery-option').
+forEach((element) => {element.addEventListener('click', () => {
+    const {productId, deliveryOptionId} = element.dataset;
+
+    console.log(productId, deliveryOptionId)
+    updateDeliveryOption(productId,deliveryOptionId);
+    })
 })
