@@ -24,7 +24,10 @@ export function updateQuantity(productId, newQuantity, container) {
         }
             
             updateCartQuantity('.js-checkout')
+            
+
         })
+        saveToStorage()
 }
 
 
@@ -42,7 +45,7 @@ export  function updateCartQuantity(class1) {
     document.querySelector(class1).innerHTML = cartQuantity
     };
 
-function saveToStorage() {
+export function saveToStorage() {
     localStorage.setItem('cart', JSON.stringify(cart))
 }
 
