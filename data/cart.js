@@ -1,5 +1,6 @@
 export let cart = JSON.parse(localStorage.getItem('cart'));
 
+
 if (!cart) {
     cart = [{
         productId: 'e43638ce-6aa0-4b85-b27f-e1d07eb678c6',
@@ -31,7 +32,17 @@ export function updateQuantity(productId, newQuantity, container) {
 }
 
 
+export function count() {
+    let quant = 0
+    cart.forEach((cartItem) => {
+        
+        quant += cartItem.quantity
 
+
+        
+    })
+    return quant
+}
 
 
 
