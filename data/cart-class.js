@@ -1,4 +1,3 @@
-import { loadFromStorage } from "./cart.js";
 class Cart {
     cartItems; 
     
@@ -123,7 +122,7 @@ this.saveToStorage();
 
 
 
-const cart = new Cart('cart-oop')
+export const cart = new Cart('cart-oop')
 const businessCart = new Cart('cart-business')
 
 
